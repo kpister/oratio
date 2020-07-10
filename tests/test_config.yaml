@@ -1,0 +1,33 @@
+---
+# Required params
+project_name: test_project
+input_media_file: test.mp4
+input_locale: en-US
+# Gender enum: MALE-1, FEMALE-2, UNKNOWN-3
+gender: 1
+
+# using one language as a test
+target_locales: 
+- fr-FR
+
+# Optional params
+production_dir: media/test/prod
+development_dir: media/test/dev
+
+# Video flags
+export_fps: 1
+
+# Provider enum: GCLOUD-1, AWS-2
+stt_provider: 1
+translate_provider: 1
+tts_provider: 1
+
+use_best_voices: true
+best_voices_file: best_voices.json
+
+use_config_workflow: true
+upload_to_cloud: true
+transcribe: true
+translate: true
+synthesize: true
+save_to_disk: true

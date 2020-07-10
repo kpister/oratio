@@ -1,0 +1,16 @@
+go to cloud.google.com
+create account (agree to t&c)
+Enable speech to text api
+Requests billing setup - enable
+Requests credentials setup - create
+Translation API
+No google engine stuff
+Create service account
+Download json creds
+export GOOGLE_APPLICATION_CREDENTIALS="/path/to/.keyfile.json"
+Create credentials - API Key
+Copy key to secure place
+
+Run this if you want the cli utility. 
+It isn't needed if you put the json creds in <repo_directory>/.gcloud.keyfile.json
+curl https://sdk.cloud.google.com | bash
