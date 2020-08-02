@@ -37,7 +37,17 @@ to get going! Checkout my test video in `media/prod/kaiser` to familarize yourse
 
 `python src/main.py` will use the default config.yaml provided in the home directory.
 
-## File structure
+## Understanding the Repo
+
+Start with `src/main.py`. Run it. Read it.
+
+Follow the commands it executes with a debugger.
+
+Then check out `src/client.py`. This is our biggest piece of abstraction, and especially if you are adding an API feature, you'll want a good understanding of what it is doing.
+
+`src/config.py` and `src/video_project.py` have important setup information and maintain the state of the project.
+
+### File structure
 
 ```
 . home
