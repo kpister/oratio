@@ -50,6 +50,6 @@ def create_sentences_from_word_list(results, locale):
     # best_alternative.wordswill have a fullstop.
     if sentence:
         sentence_end = word.end
-        sentences.append(Sentence(sentence_start, sentence_end, sentence))
+        sentences.append(Sentence(sentence_start, sentence_end, locale, sentence))
 
     return sentences

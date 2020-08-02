@@ -73,13 +73,7 @@ class Track:
         # of orignal Sentence is possible.
         if is_video:
             # Accomodate for floating point errors.
-
-            # assert silence_duration > -0.5
-            if silence_duration < -0.05:
-                import pdb
-
-                pdb.set_trace()  # set a debugger. These bugs should always be squashed.
-                print(silence_duration)
+            assert silence_duration > -0.5
 
         # For podcasts, we cap the max duration of silence.
         if not is_video:

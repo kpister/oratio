@@ -3,6 +3,7 @@ import time
 import boto3
 import requests
 import json
+import os
 
 from constants.constants import AWS_UPLOAD_BUCKET_URL
 import api.stt.util as util
@@ -41,8 +42,6 @@ def transcribe_storage_uri(client, uploaded_file, locale):
     )
 
     if response.ok:
-        with open("resp.json", "w") as f:
-            json.dump(response.json(), f, indent=2)
         return response.json()["results"]
     else:
         print("trancription failed")
