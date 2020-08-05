@@ -39,10 +39,10 @@ MUSIC_DIRECTORY = "media/music"
 MEDIA_PROD_PATH = os.path.join(MEDIA_DIRECTORY, PROD_DIRECTORY)
 MEDIA_DEV_PATH = os.path.join(MEDIA_DIRECTORY, DEV_DIRECTORY)
 ASSETS_DIR = os.path.join(MEDIA_DIRECTORY, "assets")
-AWS_REGION = "us-east-2.amazonaws.com"
-AWS_UPLOAD_BUCKET_NAME = "audiodub"  # TODO Must be filled in
+AWS_REGION = "" # TODO Must be filled in, something like "us-east-2.amazonaws.com" 
+AWS_UPLOAD_BUCKET_NAME = ""  # TODO Must be filled in
 AWS_UPLOAD_BUCKET_URL = f"https://{AWS_UPLOAD_BUCKET_NAME}.s3.{AWS_REGION}.com"
-GCLOUD_UPLOAD_BUCKET_NAME = "voicedub_20200606"  # TODO Must be filled in
+GCLOUD_UPLOAD_BUCKET_NAME = ""  # TODO Must be filled in
 GCLOUD_UPLOAD_BUCKET_URL = "gs://" + GCLOUD_UPLOAD_BUCKET_NAME
 
 EOS_PUNCTUATION = [".", "?", "!"]
