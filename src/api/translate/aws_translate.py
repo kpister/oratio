@@ -1,6 +1,7 @@
 import six
 import boto3
 
+
 def get_client():
     print("Using AWS for translation client")
     return boto3.client("translate")
@@ -14,8 +15,11 @@ def get_translation(translate_client, text_to_translate, target_language):
     if isinstance(text_to_translate, six.binary_type):
         text_to_translate = text_to_translate.decode("utf-8")
 
-    result = translate_client.translate_text(Text=text_to_translate,
-        SourceLanguageCode="auto", TargetLanguageCode=target_language)
+    result = translate_client.translate_text(
+        Text=text_to_translate,
+        SourceLanguageCode="auto",
+        TargetLanguageCode=target_language,
+    )
 
     print(result)
     return result["TranslatedText"]
