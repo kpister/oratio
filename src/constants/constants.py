@@ -44,6 +44,7 @@ AWS_UPLOAD_BUCKET_NAME = ""  # TODO Must be filled in
 AWS_UPLOAD_BUCKET_URL = f"https://{AWS_UPLOAD_BUCKET_NAME}.s3.{AWS_REGION}.com"
 GCLOUD_UPLOAD_BUCKET_NAME = ""  # TODO Must be filled in
 GCLOUD_UPLOAD_BUCKET_URL = "gs://" + GCLOUD_UPLOAD_BUCKET_NAME
+DEEPL_API_KEY = ""  # TODO Must be filled in
 
 EOS_PUNCTUATION = [".", "?", "!"]
 
