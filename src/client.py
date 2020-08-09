@@ -7,6 +7,7 @@ import api.stt.util
 class Provider(enum.Enum):
     GCLOUD = 1
     AWS = 2
+    AWS_DEEPL = 3
 
 
 class Client:
@@ -45,6 +46,14 @@ class Client:
         if self.tts_provider == Provider.AWS:
             from api.tts import aws_tts as tts
 
+        if self.stt_provider == Provider.AWS_DEEPL:
+            from api.storage import aws_storage as storage
+            from api.stt import aws_stt as stt
+        if self.translate_provider == Provider.AWS_DEEPL:
+            from api.translate import deepl_translate as translate
+        if self.tts_provider == Provider.AWS_DEEPL:
+            from api.tts import aws_tts as tts
+
         self.storage = storage
         self.stt = stt
         self.translate = translate
@@ -52,7 +61,8 @@ class Client:
 
         self.storage_client = storage.get_client()
         self.stt_client = stt.get_client()
-        self.translate_client = translate.get_client()
+        if not self.translate_provider == Provider.AWS_DEEPL:
+            self.translate_client = translate.get_client()
         self.tts_client = tts.get_client()
 
         self.target_voices = {}
@@ -72,9 +82,12 @@ class Client:
         return api.stt.util.create_sentences_from_word_list(word_list, locale)
 
     def get_translation(self, original_text, target_language):
-        return self.translate.get_translation(
-            self.translate_client, original_text, target_language
-        )
+        if not self.translate_provider == Provider.AWS_DEEPL:
+            return self.translate.get_translation(
+                self.translate_client, original_text, target_language
+            )
+        else:
+            return self.translate.get_translation(original_text, target_language)
 
     def get_target_voice(self, locale, gender):
         response = self.tts.list_voices(self.tts_client, locale)
@@ -119,9 +132,14 @@ class Client:
             if update_best_voices == "y":
                 self.save_best_voices()
 
-        return self.tts.get_audio_chunk_for_sentence(
-            self.tts_client, text, self.target_voices[locale], speedup=speedup
-        )
+        if self.tts_provider == Provider.GCLOUD:
+            return self.tts.get_audio_chunk_for_sentence(
+                self.tts_client, text, self.target_voices[locale], speedup=speedup
+            )
+        else:
+            return self.tts.get_audio_chunk_for_sentence(
+                self.tts_client, text, self.target_voices[locale]
+            )
 
     # Returns a list of voices which match the gender of the client
     def get_all_matching_voices(self):
