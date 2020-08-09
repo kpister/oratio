@@ -21,7 +21,7 @@ def get_translation(text_to_translate, target_language):
             "auth_key": DEEPL_API_KEY,
         }
         # making request to deepl translation API.
-        # returns a JSON representation of the translations in the order the text parameters have been specified.
+        # returns a JSON representation of the translation in the order the text parameters have been specified.
         response = requests.get("https://api.deepl.com/v2/translate", params=parameters)
         responses = response.json()
         for item in responses.values():
