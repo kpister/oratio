@@ -193,9 +193,8 @@ class Config:
         if self.use_best_voices:
             self.best_voices_path = os.path.join(REPO_PATH, self.best_voices_file)
             if not os.path.isfile(self.best_voices_path):
-                raise FileNotFoundError(
-                    f"Best voices file {self.best_voices_path} does not exist"
-                )
+                with open(self.best_voices_path, 'w') as w:
+                    w.write('{}')
 
         # set background_music_path
         if self.use_background_music:

@@ -75,7 +75,7 @@ def list_voices(client, lang_code=None, verbose=False):
     """Lists the available voices for gCloud TTS."""
     # Performs the list voices request.
     if lang_code:
-        voices = client.list_voices(lang_code)
+        voices = client.list_voices(language_code=lang_code)
     else:
         voices = client.list_voices()
 
