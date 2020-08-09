@@ -1,0 +1,26 @@
+{
+  "female": {
+    "AWS": {
+      "es-ES": "Conchita"
+    }
+  },
+  "male": {
+    "AWS": {
+      "da-DK": "Mads",
+      "de-DE": "Hans",
+      "en-AU": "Russell",
+      "en-GB": "Brian",
+      "en-GB-WLS": "Geraint",
+      "en-US": "Matthew",
+      "es-ES": "Enrique",
+      "es-US": "Miguel",
+      "fr-FR": "Mathieu",
+      "is-IS": "Karl",
+      "it-IT": "Giorgio",
+      "ja-JP": "Takumi",
+      "hi-IN": "Aditi",
+      "pl-PL": "Jacek",
+      "pt-PT": "Cristiano"
+    }
+  }
+}
