@@ -1,0 +1,12 @@
+go to https://www.ibm.com/watson/services/language-translator/
+create IBM account (click on "get started free" and follow instructions)
+once logged into IBM Cloud, go to IBM Cloud dashboard (https://cloud.ibm.com/resources)
+open "Services" dropdown and click "Langugae Translator-z9"
+remember your IBM API key and URL
+manually create a new JSON file called ".ibmkeyfile.json" with any text editor
+add your new IBM API key and URL to the respective two JSON keys...
+	{	
+		"api-key" : "YOUR_IBM_API_KEY",
+		"api-url" : "YOUR_IBM_API_URL"
+	}
+save ".ibmkeyfile.json" in REPO_PATH

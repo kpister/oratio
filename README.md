@@ -15,7 +15,7 @@ Most important:
 Also install rubberband
 `brew install rubberband`
 
-And follow the instructions in `docs/` for `aws` and `gcloud` integration.
+And follow the instructions in `docs/` for `aws`, `gcloud`, and `ibm` integration.
 Then make sure to setup the names of the s3 or gcloud bucket you will store your audio in.
 Set the `AWS_BUCKET_NAME` and the `GCLOUD_BUCKET_NAME` constants in `src/constants/constants.py`.
 
