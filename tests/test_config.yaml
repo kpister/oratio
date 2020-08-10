@@ -17,10 +17,10 @@ development_dir: media/test/dev
 # Video flags
 export_fps: 1
 
-# Provider enum: GCLOUD-1, AWS-2
-stt_provider: 1
-translate_provider: 1
-tts_provider: 1
+# Provider enum: GCLOUD-1, AWS-2, DEEPL_AWS-3
+stt_provider: 3
+translate_provider: 3
+tts_provider: 3
 
 use_best_voices: true
 best_voices_file: best_voices.json
