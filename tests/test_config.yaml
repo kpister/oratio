@@ -7,19 +7,19 @@ input_locale: en-US
 gender: 1
 
 # using one language as a test
-target_locales: 
-- fr-FR
+target_locales:
+- ko-KR
 
 # Optional params
 production_dir: media/test/prod
 development_dir: media/test/dev
 
 # Video flags
-export_fps: 1
+export_fps: 30
 
-# Provider enum: GCLOUD-1, AWS-2
+# Provider enum: GCLOUD-1, AWS-2, IBM-3
 stt_provider: 1
-translate_provider: 1
+translate_provider: 3
 tts_provider: 1
 
 use_best_voices: true

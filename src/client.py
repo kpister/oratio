@@ -7,6 +7,7 @@ import api.stt.util
 class Provider(enum.Enum):
     GCLOUD = 1
     AWS = 2
+    IBM = 3
 
 
 class Client:
@@ -44,6 +45,9 @@ class Client:
             from api.translate import aws_translate as translate
         if self.tts_provider == Provider.AWS:
             from api.tts import aws_tts as tts
+
+        if self.translate_provider == Provider.IBM:
+            from api.translate import ibm_translate as translate
 
         self.storage = storage
         self.stt = stt
