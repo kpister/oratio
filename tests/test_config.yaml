@@ -22,7 +22,7 @@ stt_provider: 1
 translate_provider: 3
 tts_provider: 1
 
-use_best_voices: true
+use_best_voices: false
 best_voices_file: best_voices.json
 
 use_config_workflow: true
