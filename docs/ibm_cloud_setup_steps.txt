@@ -10,3 +10,7 @@ add your new IBM API key and URL to the respective two JSON keys...
 		"api-url" : "YOUR_IBM_API_URL"
 	}
 save ".ibmkeyfile.json" in REPO_PATH
+
+
+for more information about IBM's translation API and python wrapper, refer to...
+https://cloud.ibm.com/apidocs/language-translator?code=python
