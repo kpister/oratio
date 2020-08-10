@@ -8,6 +8,8 @@ Generate quality video and podcast localizations at scale.
 
 Most important:
 
+`python --version` >= 3.7
+
 `pip install -r docs/requirements.txt`
 
 Also install rubberband
