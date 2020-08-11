@@ -8,7 +8,7 @@ gender: 1
 
 # using one language as a test
 target_locales: 
-- fr-FR
+- de-DE
 
 # Optional params
 production_dir: media/test/prod
@@ -17,10 +17,10 @@ development_dir: media/test/dev
 # Video flags
 export_fps: 1
 
-# Provider enum: GCLOUD-1, AWS-2, DEEPL_AWS-3
-stt_provider: 3
+# Provider enum: GCLOUD-1, AWS-2, DEEPL-3
+stt_provider: 2
 translate_provider: 3
-tts_provider: 3
+tts_provider: 2
 
 use_best_voices: true
 best_voices_file: best_voices.json
