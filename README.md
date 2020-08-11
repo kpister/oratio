@@ -11,7 +11,8 @@ Most important:
 `pip install -r docs/requirements.txt`
 
 Also install rubberband
-`brew install rubberband`
+macOS: `brew install rubberband`
+Linux: `sudo apt-get install -y rubberband-cli`
 
 And follow the instructions in `docs/` for `aws` and `gcloud` integration.
 Then make sure to setup the names of the s3 or gcloud bucket you will store your audio in.

@@ -17,7 +17,7 @@ beckham: false
 export_fps: 0 # 0 is original video (or don't include the variable)
 gcloud_speedup: true # if true, will run through gcloud tts twice
 
-# Provider enum: GCLOUD-1, AWS-2, AWS_DEEPL-3
+# Provider enum: GCLOUD-1, AWS-2, DEEPL-3
 stt_provider: 1
 translate_provider: 1
 tts_provider: 1
