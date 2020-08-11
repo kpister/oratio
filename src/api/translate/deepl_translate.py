@@ -4,7 +4,13 @@ import requests
 from constants.constants import DEEPL_API_KEY
 
 
-def get_translation(text_to_translate, target_language):
+# returns None
+def get_client():
+    print("Using DeepL for translation client")
+    return None
+
+
+def get_translation(translate_client, text_to_translate, target_language):
     """Translates text into the target language.
     Target must be an ISO 639-1 language code.
     See https://www.deepl.com/docs-api/other-functions/listing-supported-languages/
