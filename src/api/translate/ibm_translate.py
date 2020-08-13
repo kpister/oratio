@@ -10,7 +10,7 @@ from constants.constants import REPO_PATH
 def get_translation(translate_client, text_to_translate, target_language):
     """Translates text into the target language.
     Target must be an ISO 639-1 language code.
-    See https://cloud.ibm.com/docs/language-translator?topic=language-translator-translation-models
+    See https://tinyurl.com/y6mysbko
     """
     if isinstance(text_to_translate, six.binary_type):
         text_to_translate = text_to_translate.decode("utf-8")
@@ -18,16 +18,19 @@ def get_translation(translate_client, text_to_translate, target_language):
     results = translate_client.translate(
         text=text_to_translate,
         target=target_language).get_result()
-    # example results: {'translations': [{'translation': 'Sono assolutamente sconvolto questo in realtà funziona!'}], 'word_count': 8, 'character_count': 41}
+    # example results: {'translations': [{'translation':
+    # 'Sono assolutamente sconvolto questo in realtà funziona!'}],
+    # 'word_count': 8, 'character_count': 41}
 
     return results['translations'][0]['translation']
 
 
 def get_supported_languages(translate_client, verbose=False):
-    """Lists all available ~identifiable~ languages for IBM Watson translation API."""
-    identifiable_languages = translate_client.list_identifiable_languages().get_result()
-    # example identifiable_languages: {'languages': [{'language': 'af', 'name': 'Afrikaans'}, {'language': 'ar', 'name': 'Arabic'}, ... ] }
-    results = identifiable_languages['languages']
+    """Lists all available ~identifiable~ languages for IBM translation"""
+    iden_langs = translate_client.list_identifiable_languages().get_result()
+    # example iden_langs: {'languages': [{'language': 'af',
+    # 'name': 'Afrikaans'}, {'language': 'ar', 'name': 'Arabic'}, ... ] }
+    results = iden_langs['languages']
     if verbose:
         for language in results:
             print(u"{name} ({language})".format(**language))
@@ -47,7 +50,7 @@ def get_client():
         # instantiates instance of IBM API with IAM authentication
         authenticator = IAMAuthenticator(api_key)
         language_translator = LanguageTranslatorV3(
-            version='2018-05-01', # this is the current version
+            version='2018-05-01',  # this is the current version
             authenticator=authenticator
         )
         language_translator.set_service_url(api_url)
