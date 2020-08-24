@@ -23,7 +23,10 @@ class Config:
         self.target_locales = self.get(
             "target_locales", required=True, validate=validate_locales
         )
-        self.gender = self.get("gender", required=True, vtype=SsmlVoiceGender)
+
+        self.num_of_speakers = self.get(
+            "num_of_speakers", required=True, vtype=int, default=0
+        )
 
         # video flags
         if self.is_video():
@@ -48,7 +51,7 @@ class Config:
         self.tts_provider = self.get(
             "tts_provider", vtype=Provider, default=Provider.GCLOUD
         )
-        # create the client from the providers and gender
+        # create the client from the providers
         self.client = Client(
             upload_filename=self.project_name
             + "_"
@@ -57,7 +60,6 @@ class Config:
             translate_provider=self.translate_provider,
             tts_provider=self.tts_provider,
             gcloud_speedup=self.gcloud_speedup,
-            gender=self.gender,
         )
 
         # decoration
@@ -99,7 +101,7 @@ class Config:
 
     # How we retrieve and validate our configuration
     def get(self, param, required=False, vtype=None, default=None, validate=None):
-        """ 
+        """
             param: the value to grab from the dictionary
             required: if set to true, the return must be non-None
             vtype: the type of the value, bool, str, int
@@ -141,15 +143,15 @@ class Config:
                 print("[Warning] Export fps flag set on non video")
 
         # self.production_path exists
-        if not os.path.isdir(self.prod_path):
-            raise FileNotFoundError(f"Production path {self.prod_path} does not exist")
+        # if not os.path.isdir(self.prod_path):
+        #    raise FileNotFoundError(f"Production path {self.prod_path} does not exist")
 
         # self.development_path exists [create if it doesn't]
         if not os.path.isdir(self.dev_path):
             os.makedirs(self.dev_path)
 
         # if we want all available langs, get those now
-        # availability depends on tts provider (gender must match)
+        # availability depends on tts provider (gender does NOT need to match)
         if self.target_locales == ["all"]:
             voices = self.client.get_all_matching_voices()
             self.target_locales = list(set([v.locale for v in voices]))
@@ -175,7 +177,7 @@ class Config:
             if not self.beckham and not os.path.isdir(
                 os.path.join(self.prod_path, locale)
             ):
-                os.mkdir(os.path.join(self.prod_path, locale))
+                os.makedirs(os.path.join(self.prod_path, locale))
 
         # remove the input_locale from targets so we don't translate/synthesize
         if self.input_locale in self.target_locales:

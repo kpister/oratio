@@ -1,5 +1,4 @@
 import os
-
 import math
 from google.cloud import speech
 from constants.constants import (

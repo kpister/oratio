@@ -13,6 +13,8 @@ from constants.constants import (
     DUBBED_AUDIO_FILENAME,
     DEFAULT_STT_INPUT_FILENAME,
     DEFAULT_STT_INPUT_FORMAT,
+    REPO_PATH,
+    PY_AUDIO_ANALYSIS_DATA_DIRECTORY,
     SentenceIoMode,
 )
 from moviepy.editor import VideoFileClip, AudioFileClip
@@ -35,6 +37,9 @@ class Project:
         # Dev path contains in between audio segments and transcriptions
         self.dev_path = config.dev_path
         self.client = config.client
+
+        self.num_of_speakers = config.num_of_speakers
+        self.speaker_genders = {}
 
         self.sentences = []
         self.tracks = {}
@@ -84,6 +89,8 @@ class Project:
                 row["end_time"],
                 self.input_locale,
                 row["original_text"],
+                row["speaker"],
+                row["gender"]
             )
             if mode == SentenceIoMode.TRANSLATE:
                 for translation in row["translated_sentences"]:
@@ -169,6 +176,64 @@ class Project:
                 self.full_path, (DEFAULT_STT_INPUT_FILENAME + DEFAULT_STT_INPUT_FORMAT)
             )
         )
+
+    def diarize_sentences(self):
+        if self.num_of_speakers != 1:
+            from pyAudioAnalysis.audioSegmentation import speaker_diarization
+
+            input_file = os.path.join(
+                self.full_path, (DEFAULT_STT_INPUT_FILENAME + DEFAULT_STT_INPUT_FORMAT)
+            )
+            output_file = os.path.join(
+                REPO_PATH, PY_AUDIO_ANALYSIS_DATA_DIRECTORY, (DEFAULT_STT_INPUT_FILENAME + ".wav")
+            )
+            command = "ffmpeg -i " + input_file + " " + output_file
+            os.system(command)
+            input("\a\nFFmpeg audio conversion for diarization complete. Press <enter> to continue")
+
+            diarized_speakers = speaker_diarization(output_file, self.num_of_speakers)
+            input("\a\nDiarization complete. Press <enter> to continue")
+
+            # list of speakers... example -> [0,0,0,0,0,0,1,1,1,1,1,1,1,1,1,1,1,0,0,0]
+            diarized_speakers.tolist()  # converts from numpy ndarray
+            # the number of speakers in the audio/video (this could have been dynamically determined)
+            self.num_of_speakers = int(max(diarized_speakers) + 1)
+            # sometimes the ML algo doesn't mark the original speaker as 0... this corrects that
+            # by moving every speaker marker down by one (zeros circle back to the top)
+            if int(diarized_speakers[0]) != 0:
+                for i in range(len(diarized_speakers)):
+                    if diarized_speakers[int(i)] > 0:
+                        diarized_speakers[int(i)] -= 1
+                    elif diarized_speakers[int(i)] == 0:
+                        diarized_speakers[int(i)] = self.num_of_speakers - 1
+            # parallel list to diarized_speakers; the time of each element in diarized_speakers
+            speaker_timing = [round((i*0.2+0.1), 1) for i in range(len(diarized_speakers))]
+
+            print(f"\a\n{self.num_of_speakers} unique speakers detected:")
+            for i in range(self.num_of_speakers):
+                self.speaker_genders[(i+1)] = input(f"\tSpeaker #{(i+1)} gender (male=1, female=2, unknown=3): ")
+
+            for sentence in self.sentences:
+                # finds sub list of valid speakers inside time interval of sentence
+                start = sentence.start_time
+                end = sentence.end_time
+                valid_times = [time for time in speaker_timing if time >= start if time <= end]
+                valid_speakers = [diarized_speakers[speaker_timing.index(time)] for time in valid_times]
+                # sets sentence's speaker and gender based on the most prevelant speaker in the interval
+                sentence.speaker = int(max(set(valid_speakers), key = valid_speakers.count)) + 1
+                sentence.gender = int(self.speaker_genders[sentence.speaker])
+
+    def verify_diarization(self):
+        if self.num_of_speakers != 1:
+            if input("Is diarization verification needed? [y/N] ") == "y":
+                for sentence in self.sentences:
+                    print(f"Diarization determined speaker #{sentence.speaker} said \"{sentence.original_text}\"")
+                    real_speaker = int(input("\tWho really said this? "))
+                    if real_speaker <= self.num_of_speakers and real_speaker > 0:
+                        sentence.speaker = real_speaker
+                        sentence.gender = int(self.speaker_genders[sentence.speaker])
+                    elif real_speaker > self.num_of_speakers or real_speaker <= 0:
+                        print("Invalid input; ignoring")
 
     def transcribe_sentences(self):
         self.sentences = self.client.transcribe_sentences(self.input_locale)

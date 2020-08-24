@@ -35,11 +35,29 @@ class TargetVoice:
 
 
 def gender_string(gender):
+    if gender in ["male", "female", "unknown"]:
+        return gender  # already a string
     if gender == SsmlVoiceGender.MALE:
         return "male"
     if gender == SsmlVoiceGender.FEMALE:
         return "female"
+    if int(gender) == 1:
+        return "male"
+    if int(gender) == 2:
+        return "female"
     return "unknown"
+
+
+def gender_number(gender):
+    if gender == SsmlVoiceGender.MALE:
+        return 1
+    if gender == SsmlVoiceGender.FEMALE:
+        return 2
+    if int(gender) == "male":
+        return 1
+    if int(gender) == "female":
+        return 2
+    return 3
 
 
 def convert_gender(gender_string):

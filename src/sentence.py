@@ -12,12 +12,14 @@ from target_voice import get_lang_code
 
 class Sentence:
     def __init__(
-        self, start_time, end_time, input_locale, original_text,
+        self, start_time, end_time, input_locale, original_text, speaker = 1, gender = 1
     ):
         self.start_time = start_time
         self.end_time = end_time
         self.input_locale = input_locale
         self.original_text = original_text
+        self.speaker = speaker
+        self.gender = gender  # note that sentence genders are stored as ints not strings
         self.duration = round(end_time - start_time, 1)
         # Map of (target_language,TranslatedSentence)
         self.translated_sentences = {}
@@ -34,6 +36,8 @@ class Sentence:
     # Used to save sentences to disk after transcription.
     def to_dict(self):
         return {
+            "speaker": self.speaker,
+            "gender": self.gender,
             "start_time": self.start_time,
             "end_time": self.end_time,
             "original_text": self.original_text,
@@ -83,7 +87,7 @@ class Sentence:
             audio_bytes, samplerate = sf.read(
                 io.BytesIO(
                     client.get_audio_chunk_for_sentence(
-                        translation.text, locale, speedup=translation.compression_ratio
+                        translation.text, locale, self.speaker, self.gender, speedup=translation.compression_ratio
                     )
                 ),
                 always_2d=True,
@@ -122,7 +126,7 @@ class Sentence:
     # Use Text to Speech to translate this sentence into each of its target voices
     def synthesize(self, client, locale):
         translation = self.get_translated_sentence(locale)
-        translated_audio = client.get_audio_chunk_for_sentence(translation.text, locale)
+        translated_audio = client.get_audio_chunk_for_sentence(translation.text, locale, self.speaker, self.gender)
         self.synthesized_sentences[locale] = SynthesizedSentence(
             locale, translated_audio, text=translation.text
         )

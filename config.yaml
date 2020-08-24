@@ -1,23 +1,28 @@
 ---
 # Required params
-project_name: kaiser
+project_name: jwstanly
 input_media_file: original_video.mp4
 input_locale: en-US
-# Gender enum: MALE-1, FEMALE-2, UNKNOWN-3
-gender: 1
 
-# use `all` to get all the available voices for specified gender
+# number of speakers
+# If one, diarization will automatically not run
+# Use zero if unknown (however expect worse diarization results)
+num_of_speakers: 2
+
+# use `all` to get all the available voices
 target_locales:
-- fr-FR
+- en-GB
 
 # Optional params
+# production_dir: media/test/prod
+# development_dir: media/test/dev
 
 # Video flags
 beckham: false
 export_fps: 0 # 0 is original video (or don't include the variable)
 gcloud_speedup: true # if true, will run through gcloud tts twice
 
-# Provider enum: GCLOUD-1, AWS-2
+# Provider enum: GCLOUD-1, AWS-2, IBM-3
 stt_provider: 1
 translate_provider: 1
 tts_provider: 1
@@ -25,6 +30,7 @@ tts_provider: 1
 # moviepy is really slow at generating watermarks.
 # Ideally, should set for the final run.
 include_watermarks: false
+
 
 use_best_voices: true
 best_voices_file: best_voices.json
@@ -35,9 +41,9 @@ use_background_music: false
 background_music_file: default_background.wav
 
 # instead of workflow in main.py, just set these
-use_config_workflow: false
+use_config_workflow: true
 upload_to_cloud: false
-transcribe: false
+transcribe: true
 translate: true
 synthesize: true
 save_to_disk: true

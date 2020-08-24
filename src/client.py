@@ -1,12 +1,13 @@
 import enum
 import json
-from target_voice import create_voice, gender_string
+from target_voice import create_voice, gender_string, gender_number
 import api.stt.util
 
 
 class Provider(enum.Enum):
     GCLOUD = 1
     AWS = 2
+    IBM = 3
 
 
 class Client:
@@ -17,7 +18,6 @@ class Client:
         translate_provider=Provider.GCLOUD,
         tts_provider=Provider.GCLOUD,
         gcloud_speedup=False,  # temporary flag
-        gender=None,
     ):
         self.upload_filename = upload_filename
         self.stt_provider = stt_provider
@@ -25,8 +25,6 @@ class Client:
         self.tts_provider = tts_provider
         self.setup_clients()
         self.gcloud_speedup = gcloud_speedup
-
-        self.gender = gender
 
     def setup_clients(self):
         if self.stt_provider == Provider.GCLOUD:
@@ -44,6 +42,9 @@ class Client:
             from api.translate import aws_translate as translate
         if self.tts_provider == Provider.AWS:
             from api.tts import aws_tts as tts
+
+        if self.translate_provider == Provider.IBM:
+            from api.translate import ibm_translate as translate
 
         self.storage = storage
         self.stt = stt
@@ -76,13 +77,13 @@ class Client:
             self.translate_client, original_text, target_language
         )
 
-    def get_target_voice(self, locale, gender):
+    def get_target_voice(self, locale, gender, speaker):
         response = self.tts.list_voices(self.tts_client, locale)
         voices = self.tts.normalize_voices(response)
 
         # find the best matches
         options = [
-            v for v in voices if (v.gender == self.gender and v.locale == locale)
+            v for v in voices if (v.locale == locale and v.gender == gender)
         ]
 
         if voices == []:
@@ -97,7 +98,8 @@ class Client:
         if len(options) == 1:
             return options[0]
 
-        print(f"Options for {gender_string(gender)} - {locale}")
+        print(f"Speaker #{speaker}")
+        print(f"Options for {locale}")
         for idx, voice in enumerate(options):
             print(f"#{idx} - {voice.name}")
 
@@ -109,21 +111,21 @@ class Client:
 
         return options[int(choice)]
 
-    def get_audio_chunk_for_sentence(self, text, locale, speedup=1.0):
-        if locale not in self.target_voices:
-            self.target_voices[locale] = self.get_target_voice(locale, self.gender)
-            print(self.target_voices[locale])
+    def get_audio_chunk_for_sentence(self, text, locale, speaker, gender, speedup=1.0):
+        if (locale+str(speaker)) not in self.target_voices:
+            self.target_voices[locale+str(speaker)] = self.get_target_voice(locale, gender, speaker)
+            print(self.target_voices[locale+str(speaker)])
             update_best_voices = input(
                 "Would you like to update the best voices file? (y/N) "
             )
             if update_best_voices == "y":
-                self.save_best_voices()
+                self.save_best_voices(speaker, gender)
 
         return self.tts.get_audio_chunk_for_sentence(
-            self.tts_client, text, self.target_voices[locale], speedup=speedup
+            self.tts_client, text, self.target_voices[locale+str(speaker)], speedup=speedup
         )
 
-    # Returns a list of voices which match the gender of the client
+    # Returns a list of voices
     def get_all_matching_voices(self):
         response = self.tts.list_voices(self.tts_client)
         voices = self.tts.normalize_voices(response)
@@ -139,60 +141,73 @@ class Client:
                 broken.append(v.locale)
 
         return [
-            v for v in voices if (v.gender == self.gender and v.locale not in broken)
+            v for v in voices if (v.locale not in broken)
         ]
 
     def load_best_voices(self, voices_file, target_locales):
         # json will have the following structure
-        # { gender: {
-        #       "AWS" : {
-        #           locale : voiceId
-        #               ...
-        #           },
-        #       "gcloud" : {
-        #           locale : name
-        #               ...
-        #           },
+        # dict follows this structure -> voices[platform][speaker][speaker_data]
+        # {
+        #   "gcloud": {
+        #       "1": {
+        #           "gender": "male",
+        #           "locale": "en-GB",
+        #           "voice_name": "en-GB-Wavenet-B"
         #       }
+        #   }
+        #   "AWS" : {
+        #       "1": {
+        #           "gender": "male",
+        #           "locale": "en-GB",
+        #           "voice_name": "..."
+        #       }
+        #   }
         # }
         self.voices_file = voices_file
         with open(voices_file) as f:
             voices = json.load(f)
 
         provider = self.tts.provider_name()
-        gender = gender_string(self.gender)
-        if gender not in voices or provider not in voices[gender]:
+        if provider not in voices:
             return
 
-        for locale, name in voices[gender][
+        for speaker, speaker_data in voices[
             provider
-        ].items():  # this should be a list of locale : name
+        ].items():
+            speaker = int(speaker)
+            gender = speaker_data["gender"]
+            locale = speaker_data["locale"]
+            voice_name = speaker_data["voice_name"]
             if provider == "AWS":
-                self.target_voices[locale] = create_voice(
-                    locale, self.gender, voiceId=name
+                self.target_voices[locale+str(speaker)] = create_voice(
+                    locale, gender, voiceId=voice_name
                 )
             if provider == "gcloud":
-                self.target_voices[locale] = create_voice(
-                    locale, self.gender, gcloud_name=name
+                self.target_voices[locale+str(speaker)] = create_voice(
+                    locale, gender, gcloud_name=voice_name
                 )
             if locale in target_locales:
-                print(self.target_voices[locale])
+                print(self.target_voices[locale+str(speaker)])
 
-    def save_best_voices(self):
+    def save_best_voices(self, speaker, gender):
         with open(self.voices_file) as f:
             voices = json.load(f)
 
         provider = self.tts.provider_name()
-        gender = gender_string(self.gender)
 
-        if gender not in voices:
-            voices[gender] = {}
+        if provider not in voices:
+            voices[provider] = {}
 
-        if provider not in voices[gender]:
-            voices[gender][provider] = {}
+        if speaker not in voices[provider]:
+            voices[provider][speaker] = {}
 
-        for locale, voice in self.target_voices.items():
-            voices[gender][provider][locale] = voice.name
+        for locale_and_speaker, voice in self.target_voices.items():
+            gender = gender_string(gender)  # converts gender number to string
+            locale = locale_and_speaker[:-1]  # extracts locale from target_voices dict key
+            voice_name = voice.name  # extracts voice's name from the voice name value
+            voices[provider][speaker]["gender"] = gender
+            voices[provider][speaker]["locale"] = locale
+            voices[provider][speaker]["voice_name"] = voice_name
 
         with open(self.voices_file, "w") as w:
             w.write(json.dumps(voices, indent=2))

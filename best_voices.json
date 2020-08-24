@@ -1,0 +1,14 @@
+{
+  "gcloud": {
+    "1": {
+      "gender": "male",
+      "locale": "en-GB",
+      "voice_name": "en-GB-Wavenet-B"
+    },
+    "2": {
+      "gender": "female",
+      "locale": "en-GB",
+      "voice_name": "en-GB-Wavenet-A"
+    }
+  }
+}

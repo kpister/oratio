@@ -15,7 +15,11 @@ Most important:
 Also install rubberband
 `brew install rubberband`
 
-And follow the instructions in `docs/` for `aws` and `gcloud` integration.
+For speech diarization, clone pyAudioAnalysis inside the oratio directory `git clone https://github.com/tyiannak/pyAudioAnalysis.git`. The dependencies for pyAudioAnalysis are already included in oratio's `docs/requirements.txt`. 
+Also make sure FFmpeg is installed. More installation info at `https://ffmpeg.org/`. 
+
+
+And follow the instructions in `docs/` for `aws`, `gcloud`, and `ibm` integration.
 Then make sure to setup the names of the s3 or gcloud bucket you will store your audio in.
 Set the `AWS_BUCKET_NAME` and the `GCLOUD_BUCKET_NAME` constants in `src/constants/constants.py`.
 
