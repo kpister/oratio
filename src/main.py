@@ -56,6 +56,8 @@ if upload_flac_to_cloud_bucket:
 
 if need_to_transcribe:
     project.transcribe_sentences()
+    project.diarize_sentences()
+    project.verify_diarization()
     project.save_sentences(SentenceIoMode.TRANSCRIBE)
     input("\aPress <enter> to continue (will reload sentences from disk)")
 

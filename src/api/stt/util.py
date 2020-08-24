@@ -38,6 +38,8 @@ def create_sentences_from_word_list(results, locale):
         sentence += word.text
         if word.is_punc and word.text in EOS_PUNCTUATION:
             sentence_end = word.end
+            # noticeably, speaker and gender are not passed as params... they are added
+            # to each sentence instance after this during project.diarize_sentences()
             sentences.append(Sentence(sentence_start, sentence_end, locale, sentence))
             # Reset the counter.
             sentence = ""
