@@ -12,7 +12,11 @@ from target_voice import get_lang_code
 
 class Sentence:
     def __init__(
-        self, start_time, end_time, input_locale, original_text,
+        self,
+        start_time,
+        end_time,
+        input_locale,
+        original_text,
     ):
         self.start_time = start_time
         self.end_time = end_time
@@ -110,8 +114,12 @@ class Sentence:
     def translate(self, client, lang_code):
         # the lang_code here still needs conversion from cmn to zh for example
         target_language = get_lang_code(lang_code)
+        original_language = get_lang_code(self.input_locale)
         raw_translation = client.get_translation(
-            unescape(self.original_text), target_language
+            unescape(self.original_text),
+            original_language,
+            target_language,
+            with_eval=False,
         )
         # Languages like french have apostrophes.
         # gCloud translate uses HTML character references.

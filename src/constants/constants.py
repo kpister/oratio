@@ -47,6 +47,8 @@ GCLOUD_UPLOAD_BUCKET_URL = "gs://" + GCLOUD_UPLOAD_BUCKET_NAME
 
 EOS_PUNCTUATION = [".", "?", "!"]
 
+MODELFRONT_TOKEN = os.environ.get("MODELFRONT_TOKEN")
+
 
 # creating enumerations using class
 class SentenceIoMode(enum.Enum):
