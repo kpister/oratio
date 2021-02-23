@@ -71,10 +71,21 @@ class Client:
 
         return api.stt.util.create_sentences_from_word_list(word_list, locale)
 
-    def get_translation(self, original_text, target_language):
-        return self.translate.get_translation(
+    def get_translation(
+        self, original_text, original_language, target_language, with_eval=False
+    ):
+        translation = self.translate.get_translation(
             self.translate_client, original_text, target_language
         )
+
+        if with_eval:
+            score = modelfront.evaluate(
+                original_text, original_language, translation, target_language
+            )
+        else:
+            score = None
+
+        return translation, score
 
     def get_target_voice(self, locale, gender):
         response = self.tts.list_voices(self.tts_client, locale)
