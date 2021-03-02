@@ -7,6 +7,7 @@ import api.stt.util
 class Provider(enum.Enum):
     GCLOUD = 1
     AWS = 2
+    DEEPL = 3
 
 
 class Client:
@@ -44,6 +45,9 @@ class Client:
             from api.translate import aws_translate as translate
         if self.tts_provider == Provider.AWS:
             from api.tts import aws_tts as tts
+
+        if self.translate_provider == Provider.DEEPL:
+            from api.translate import deepl_translate as translate
 
         self.storage = storage
         self.stt = stt
@@ -130,9 +134,14 @@ class Client:
             if update_best_voices == "y":
                 self.save_best_voices()
 
-        return self.tts.get_audio_chunk_for_sentence(
-            self.tts_client, text, self.target_voices[locale], speedup=speedup
-        )
+        if self.tts_provider == Provider.GCLOUD:
+            return self.tts.get_audio_chunk_for_sentence(
+                self.tts_client, text, self.target_voices[locale], speedup=speedup
+            )
+        else:
+            return self.tts.get_audio_chunk_for_sentence(
+                self.tts_client, text, self.target_voices[locale]
+            )
 
     # Returns a list of voices which match the gender of the client
     def get_all_matching_voices(self):

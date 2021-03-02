@@ -10,7 +10,7 @@ def get_client():
 def get_translation(translate_client, text_to_translate, target_language):
     """Translates text into the target language.
     Target must be an ISO 639-1 language code.
-    See https://g.co/cloud/translate/v2/translate-reference#supported_languages
+    See https://docs.aws.amazon.com/translate/latest/dg/what-is.html#what-is-languages
     """
     if isinstance(text_to_translate, six.binary_type):
         text_to_translate = text_to_translate.decode("utf-8")
